@@ -46,35 +46,41 @@ func getTemperatures() ([]Temp, error) {
 		if device.Name() == "w1_bus_master1" {
 			continue
 		}
-		content, err := ioutil.ReadFile("/sys/bus/w1/devices/" + device.Name() + "/w1_slave")
-		if err != nil {
-			log.Infof("Error reading device %s\n", device.Name())
-			continue
-		}
-		lines := strings.Split(string(content), "\n")
-		if len(lines) != 3 {
-			log.Infof("Unknown format for device %s\n", device.Name())
-			continue
-		}
-		if !strings.Contains(lines[0], "YES") {
-			log.Infof("CRC invalid for device %s\n", device.Name())
-			continue
-		}
-		data := strings.SplitAfter(lines[1], "t=")
-		if len(data) != 2 {
-			log.Infof("Temp value not found for device %s\n", device.Name())
-			continue
-		}
-		strValue := reg.ReplaceAllString(data[1], "")
+		for i := 1; i <= 5; i++ {
+			content, err := ioutil.ReadFile("/sys/bus/w1/devices/" + device.Name() + "/w1_slave")
+			if err != nil {
+				log.Infof("Error reading device %s\n", device.Name())
+				continue
+			}
+			lines := strings.Split(string(content), "\n")
+			if len(lines) != 3 {
+				log.Infof("Unknown format for device %s\n", device.Name())
+				continue
+			}
+			if !strings.Contains(lines[0], "YES") {
+				log.Infof("CRC invalid for device %s\n", device.Name())
+				continue
+			}
+			data := strings.SplitAfter(lines[1], "t=")
+			if len(data) != 2 {
+				log.Infof("Temp value not found for device %s\n", device.Name())
+				continue
+			}
+			strValue := reg.ReplaceAllString(data[1], "")
 
-		tempInt, err := strconv.ParseFloat(strValue, 64)
-		if err != nil {
-			continue
+			tempInt, err := strconv.ParseFloat(strValue, 64)
+			if err != nil {
+				continue
+			}
+			if tempInt == 85000 {
+				continue
+			}
+			values = append(values, Temp{
+				ID:    device.Name(),
+				Value: tempInt / 1000.0,
+			})
+ 			break
 		}
-		values = append(values, Temp{
-			ID:    device.Name(),
-			Value: tempInt / 1000.0,
-		})
 	}
 	return values, nil
 }
