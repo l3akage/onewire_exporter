@@ -25,7 +25,7 @@ var (
 	listenAddress = flag.String("listen-address", ":9330", "Address on which to expose metrics.")
 	metricsPath   = flag.String("path", "/metrics", "Path under which to expose metrics.")
 	ignoreUnknown = flag.Bool("ignore", true, "Ignores sensors without a name")
-	nameFile      = flag.String("names", "names.yaml", "File maping IDs to names")
+	nameFile      = flag.String("names", "names.yaml", "File mapping IDs to names")
 
 	list List
 )
