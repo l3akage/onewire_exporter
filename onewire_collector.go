@@ -43,7 +43,7 @@ func getTemperatures() ([]Temp, error) {
 	}
 	var values []Temp
 	for _, device := range devices {
-		if device.Name() == "w1_bus_master1" {
+		if _, err := os.Stat("/sys/bus/w1/devices/" + device.Name() + "/w1_slave"); err != nil {
 			continue
 		}
 		for i := 1; i <= 5; i++ {
@@ -79,7 +79,7 @@ func getTemperatures() ([]Temp, error) {
 				ID:    device.Name(),
 				Value: tempInt / 1000.0,
 			})
- 			break
+			break
 		}
 	}
 	return values, nil
