@@ -47,4 +47,4 @@ onewire_temp{id="28-0416506c85ff",name="temp_sensor_01"} 28.187
 
 I used DS18b20 1-wire sensors. For a long distance (50m worked fine) i used 5v power for the sensors and 3.3v with a 4.7k resistor as pull-up.
 
-![Circuit](https://m0u.de/assets/onewire_circuit.png)
+![Circuit](onewire_circuit.png)
